@@ -1,6 +1,3 @@
-﻿namespace DefaultNamespace;
+﻿namespace ProductCatalog.Api.Dtos;
 
-public class CreateProductRequest
-{
-    
-}
+public class CreateProductRequest : ProductRequestBase { }

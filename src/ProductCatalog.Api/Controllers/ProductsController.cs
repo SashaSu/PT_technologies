@@ -1,4 +1,4 @@
-﻿namespace DefaultNamespace;
+﻿namespace ProductCatalog.Api.Controllers;
 
 public class ProductsController
 {

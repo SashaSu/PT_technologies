@@ -1,6 +1,3 @@
-﻿namespace DefaultNamespace;
+﻿namespace ProductCatalog.Api.Dtos;
 
-public class UpdateProductRequest
-{
-    
-}
+public class UpdateProductRequest : ProductRequestBase { }
