@@ -116,4 +116,49 @@ public class ProductsController : ControllerBase
 
         return StatusCode(500, new { error = "Ошибка при сохранении" });
     }
+    
+    [ApiController]
+    [Route("api/export")]
+    public class ExportController : ControllerBase
+    {
+        private readonly IExportService _exportService;
+
+        public ExportController(IExportService exportService)
+        {
+            _exportService = exportService;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Export(CancellationToken ct)
+        {
+            try
+            {
+                var count = await _exportService.ExportAllAsync(ct);
+                return Ok(new { exported = count });
+            }
+            catch (HttpRequestException)
+            {
+                return StatusCode(502, new { error = "Не удалось отправить данные во внешний сервис" });
+            }
+        }
+    }
+    
+    [ApiController]
+    [Route("mock/import")]
+    public class MockImportController : ControllerBase
+    {
+        private readonly ILogger<MockImportController> _logger;
+
+        public MockImportController(ILogger<MockImportController> logger)
+        {
+            _logger = logger;
+        }
+
+        [HttpPost]
+        public IActionResult Receive(List<ProductDto> products)
+        {
+            _logger.LogInformation("Мок-сервис получил товаров: {Count}", products.Count);
+            return Ok(new { received = products.Count });
+        }
+    }
 }

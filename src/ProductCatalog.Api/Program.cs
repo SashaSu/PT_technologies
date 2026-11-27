@@ -16,6 +16,7 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddSignalR();
 builder.Services.AddScoped<IEventPublisher, SignalEventPublisher>();
+builder.Services.AddHttpClient<IExportService, ExportService>();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateProductRequestValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<UpdateProductRequestValidator>();
 // Add services to the container.
@@ -46,3 +47,4 @@ app.MapControllers();
 app.MapHub<ProductHub>("/hubs/products");
 
 app.Run();
+public partial class Program { }
