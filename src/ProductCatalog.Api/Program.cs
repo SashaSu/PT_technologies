@@ -1,5 +1,6 @@
 
 
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using ProductCatalog.Api.Data;
 using ProductCatalog.Api.Repositories;
@@ -14,11 +15,17 @@ builder.Services.AddScoped<IProductService, ProductService>();
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.EnsureCreated();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
