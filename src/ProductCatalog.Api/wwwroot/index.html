@@ -1,0 +1,26 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>События товаров</title>
+</head>
+<body>
+<h3>События товаров</h3>
+<ul id="log"></ul>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
+<script>
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/hubs/products")
+        .build();
+
+    connection.on("ProductChanged", function (e) {
+        const li = document.createElement("li");
+        li.textContent = e.occurredAt + " | " + e.type + " | " + e.productId;
+        document.getElementById("log").prepend(li);
+    });
+
+    connection.start();
+</script>
+</body>
+</html>
