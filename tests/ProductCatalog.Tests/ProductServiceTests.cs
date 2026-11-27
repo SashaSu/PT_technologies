@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using DefaultNamespace;
+using Moq;
 using ProductCatalog.Api.Domain;
 using ProductCatalog.Api.Domain.Enums;
 using ProductCatalog.Api.Dtos;
@@ -11,10 +12,11 @@ public class ProductServiceTests
 {
     private readonly Mock<IProductRepository> _repo = new();
     private readonly ProductService _service;
+    private readonly Mock<IEventPublisher> _events = new(); 
 
     public ProductServiceTests()
     {
-        _service = new ProductService(_repo.Object);
+        _service = new ProductService(_repo.Object, _events.Object);
     }
 
     private static Product CreateProduct(Guid? id = null) => new()
@@ -157,6 +159,18 @@ public class ProductServiceTests
 
         Assert.False(result);
         _repo.Verify(r => r.DeleteAsync(It.IsAny<Product>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+    
+    [Fact]
+    public async Task CreateAsync_PublishesEvent()
+    {
+        var request = CreateRequest();
+
+        var result = await _service.CreateAsync(request, CancellationToken.None);
+
+        _events.Verify(e => e.PublishAsync(
+            It.Is<ProductChangedEvent>(x => x.Type == "Created" && x.ProductId == result.Id),
+            It.IsAny<CancellationToken>()), Times.Once);
     }
     
 }

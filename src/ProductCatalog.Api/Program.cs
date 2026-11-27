@@ -1,6 +1,7 @@
 
 
 using System.Text.Json.Serialization;
+using DefaultNamespace;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using ProductCatalog.Api.Data;
@@ -13,6 +14,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddSignalR();
+builder.Services.AddScoped<IEventPublisher, SignalEventPublisher>();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateProductRequestValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<UpdateProductRequestValidator>();
 // Add services to the container.
@@ -40,5 +43,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<ProductHub>("/hubs/products");
 
 app.Run();
